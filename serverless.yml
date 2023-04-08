@@ -1,0 +1,36 @@
+service: backendbird
+frameworkVersion: "3"
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  region: us-west-2
+
+
+functions:
+  api:
+    handler: index.handler
+    events:
+      - httpApi:
+          path: /
+          method: get
+
+resources:
+  Resourcer:
+    PhotoBucket: 
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: ${self:service}-public-photos-${sls:stage}
+    PhotoBucketAllowPublicReadPolicy:
+      Type: AWS::S3::BucketPolicy
+      Properties:
+        Bucket: !Ref PhotoBucket
+        PolicyDocument:
+          Version: "2012-10-17"
+          Statement: 
+            - Effect: Allow
+              Action: 
+                - "s3:*"
+              Resource: 
+                - !Join ['/', [!GetAtt [PhotoBucket, Arn], '*']]
+              Principal: "*"    
