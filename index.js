@@ -1,6 +1,7 @@
 const AWS = require("aws-sdk");
 const parser = require("lambda-multipart-parser")
 const s3 = new AWS.S3();
+const rekongnition = new AWS.Rekognition();
 
 async function saveFile(file){
   console.log({file})
@@ -12,21 +13,24 @@ async function saveFile(file){
     Key: file.filename,
     Body: file.content,
   }).promise();
-  return savedFile;
+
+  const labels = await  rekongnition.detectLabels({
+    Image : {
+      Bytes: file.content,
+    }
+  }).promise();
+  return {savedFile, labels};
 }
 
 module.exports.savePhoto = async (event) => {
   const {files} = await parser.parse(event);
-  files.forEach(saveFile)
+  const filesData = files.map(saveFile);
+  const results = await Promise.all(filesData)
+  
   return {
     statusCode: 200,
-    body: JSON.stringify(
-      {
-        message: "Go Serverless v3.0! Your function executed successfully!",
-        input: await  parser.parse(event),
-      },
-      null,
-      2
-    ),
+    body: JSON.stringify({
+      results
+    })
   };
 };
