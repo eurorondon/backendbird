@@ -67,12 +67,18 @@ resources:
               Principal: "*"   
 
 functions:
-  api:
+  savePhoto:
     handler: functions/savePhoto.savePhoto
     events:
       - httpApi:
           path: /
           method: post
+  getPhotos: 
+    handler: functions/getPhotos.getPhotos
+    events:
+      - httpApi:
+          path: /
+          method: get
  
 
 plugins:
