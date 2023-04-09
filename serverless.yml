@@ -5,18 +5,22 @@ provider:
   name: aws
   runtime: nodejs18.x
   region: us-west-2
+  environment:
+    BUCKET_NAME: ${self:service}-public-photos-${sls:stage}
+  
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action: 
+            - "s3:*"
+          Resource: "arn:aws:s3:::${self:service}-public-photos-${sls:stage}"
 
 
-functions:
-  api:
-    handler: index.handler
-    events:
-      - httpApi:
-          path: /
-          method: get
+
 
 resources:
-  Resourcer:
+  Resources:
     PhotoBucket: 
       Type: AWS::S3::Bucket
       Properties:
@@ -33,4 +37,16 @@ resources:
                 - "s3:*"
               Resource: 
                 - !Join ['/', [!GetAtt [PhotoBucket, Arn], '*']]
-              Principal: "*"    
+              Principal: "*"   
+
+functions:
+  api:
+    handler: index.savePhoto
+    events:
+      - httpApi:
+          path: /
+          method: post
+ 
+
+plugins:
+  - serverless-offline
