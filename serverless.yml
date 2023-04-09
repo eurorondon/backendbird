@@ -7,6 +7,7 @@ provider:
   region: us-west-2
   environment:
     BUCKET_NAME: ${self:service}-public-photos-${sls:stage}
+    PHOTOS_TABLE: ${self:service}-photos-${sls:stage}
   
   iam:
     role:
@@ -19,16 +20,38 @@ provider:
           Action:
             - "rekognition: detectLabels"
           Resource: "*"
+        - Effect : Allow
+          Action:
+            - 'dynamodb:PutItem'
+            - 'dynamodb:Get*'
+            - 'dynamodb:Scan*'
+            - 'dynamodb:Query*'
+            - 'dynamodb:UpdateItem'
+            - 'dynamodb:DeleteItem'
+          Resource: "arn:aws:dynaodb:::${self:service}-rekognition-photos-${sls:stage}"
 
 
 
 
 resources:
   Resources:
+
+    PhotosTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        AttributeDefinitions:
+          - AttributeName: primary_key
+            AttributeType: S
+        BillingMode: PAY_PER_REQUEST
+        KeySchema:
+          - AttributeName: primary_key
+            KeyType: HASH
+        TableName: ${self:service}-rekognition-photos-${sls:stage}
+
     PhotoBucket: 
       Type: AWS::S3::Bucket
       Properties:
-        BucketName: ${self:service}-public-photos-${sls:stage}
+        BucketName: ${self:service}-photos-${sls:stage}
     PhotoBucketAllowPublicReadPolicy:
       Type: AWS::S3::BucketPolicy
       Properties:
@@ -45,7 +68,7 @@ resources:
 
 functions:
   api:
-    handler: index.savePhoto
+    handler: functions/savePhoto.savePhoto
     events:
       - httpApi:
           path: /
@@ -54,3 +77,6 @@ functions:
 
 plugins:
   - serverless-offline
+custom:
+  serverless-offline:
+    httpPort: 3009
