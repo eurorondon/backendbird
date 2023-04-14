@@ -7,7 +7,7 @@ provider:
   region: us-west-2
   environment:
     BUCKET_NAME: ${self:service}-public-photos-${sls:stage}
-    PHOTOS_TABLE: ${self:service}-photos-${sls:stage}
+    PHOTOS_TABLE: ${self:service}-rekognition-photos-${sls:stage}
   
   iam:
     role:
