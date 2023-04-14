@@ -1,3 +1,4 @@
+app: backendbird
 service: backendbird
 frameworkVersion: "3"
 
