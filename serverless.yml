@@ -29,7 +29,7 @@ provider:
             - 'dynamodb:Query*'
             - 'dynamodb:UpdateItem'
             - 'dynamodb:DeleteItem'
-          Resource: "arn:aws:dynaodb:::${self:service}-rekognition-photos-${sls:stage}"
+          Resource: "arn:aws:dynamodb:::${self:service}-rekognition-photos-${sls:stage}"
 
 
 
