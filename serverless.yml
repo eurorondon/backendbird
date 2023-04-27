@@ -16,7 +16,7 @@ provider:
         - Effect: Allow
           Action: 
             - "s3:*"
-          Resource: "arn:aws:s3:::${self:service}-public-photos-${sls:stage}"
+          Resource: "arn:aws:s3:::${self:service}-photos-${sls:stage}"
         - Effect: Allow
           Action:
             - "rekognition: detectLabels"
