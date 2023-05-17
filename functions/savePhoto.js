@@ -4,9 +4,11 @@ const s3 = new AWS.S3();
 const rekongnition = new AWS.Rekognition();
 const dynamodb = new AWS.DynamoDB.DocumentClient();
 const { v4: uuidv4 } = require("uuid");
+const sendResponse = require("../utils/sendResponse");
+const { BUCKET_NAME, PHOTOS_TABLE } = require("../const/paths");
 
 async function saveFile(file) {
-  const BucketName = process.env.BUCKET_NAME;
+  const BucketName = BUCKET_NAME;
 
   const savedFile = await s3
     .putObject({
@@ -28,7 +30,7 @@ async function saveFile(file) {
   const labels = Labels.map((label) => label.Name);
   await dynamodb
     .put({
-      TableName: process.env.PHOTOS_TABLE,
+      TableName: PHOTOS_TABLE,
       Item: {
         primary_key,
         name: file.filename,
@@ -49,14 +51,5 @@ module.exports.savePhoto = async (event) => {
   const filesData = files.map(saveFile);
   const results = await Promise.all(filesData);
 
-  return {
-    statusCode: 200,
-    headers: {
-      "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Credentials": true,
-    },
-    body: JSON.stringify({
-      results,
-    }),
-  };
+  return sendResponse(200, results);
 };

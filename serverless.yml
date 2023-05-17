@@ -9,6 +9,8 @@ provider:
   environment:
     BUCKET_NAME: ${self:service}-photos-${sls:stage}
     PHOTOS_TABLE: ${self:service}-rekognition-photos-${sls:stage}
+  httpApi:
+    cors: true
   
   iam:
     role:
@@ -74,14 +76,14 @@ functions:
       - httpApi:
           path: /
           method: post
-          cors: true
+         
   getPhotos: 
     handler: functions/getPhotos.getPhotos
     events:
       - httpApi:
           path: /
           method: get
-          cors: true
+         
  
 
 plugins:
