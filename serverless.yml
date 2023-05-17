@@ -74,12 +74,14 @@ functions:
       - httpApi:
           path: /
           method: post
+          cors: true
   getPhotos: 
     handler: functions/getPhotos.getPhotos
     events:
       - httpApi:
           path: /
           method: get
+          cors: true
  
 
 plugins:
