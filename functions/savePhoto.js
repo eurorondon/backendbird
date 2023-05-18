@@ -1,11 +1,8 @@
-const AWS = require("aws-sdk");
 const parser = require("lambda-multipart-parser");
-const s3 = new AWS.S3();
-const rekongnition = new AWS.Rekognition();
-const dynamodb = new AWS.DynamoDB.DocumentClient();
 const { v4: uuidv4 } = require("uuid");
 const sendResponse = require("../utils/sendResponse");
 const { BUCKET_NAME, PHOTOS_TABLE } = require("../const/paths");
+const { rekognition, s3, dynamodb } = require("../const/providers");
 
 async function saveFile(file) {
   const BucketName = BUCKET_NAME;
@@ -18,7 +15,7 @@ async function saveFile(file) {
     })
     .promise();
 
-  const { Labels } = await rekongnition
+  const { Labels } = await rekognition
     .detectLabels({
       Image: {
         Bytes: file.content,

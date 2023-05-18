@@ -5,6 +5,7 @@ frameworkVersion: "3"
 provider:
   name: aws
   runtime: nodejs18.x
+  timeout: 28
   region: us-west-2
   environment:
     BUCKET_NAME: ${self:service}-photos-${sls:stage}
