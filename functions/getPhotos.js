@@ -1,9 +1,8 @@
-const AWS = require("aws-sdk");
 const formatPhotoResponse = require("../utils/formatPhotoResponse");
 const sendResponse = require("../utils/sendResponse");
 const { PHOTOS_TABLE } = require("../const/paths");
 
-const dynamodb = new AWS.DynamoDB.DocumentClient();
+const { dynamodb } = require("../const/providers");
 
 module.exports.getPhotos = async (event) => {
   const results = await dynamodb
